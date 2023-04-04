@@ -1,5 +1,6 @@
 import os
 import os.path
+import subprocess
 from pathlib import Path
 
 from config.drive import currentdayImagePath, doneUploadList, today
@@ -69,7 +70,7 @@ def ConfigPermission(service, folderID):
 
 def CleanUp():
     for file in doneUploadList:
-        os.system(f'rm {Path(f"{currentdayImagePath}/{file}")}')
+        subprocess.call(["rm", f'{Path(f"{currentdayImagePath}/{file}")}'])
     doneUploadList.clear()
 
 def FetchAllDateFolders(service, roomFolderID):

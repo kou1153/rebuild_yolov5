@@ -1,3 +1,4 @@
+import asyncio
 from paho.mqtt import client as mqtt_client
 from config.mqtt import client_id, username, password, broker, port, topicSub, topicPub, serverRequestCamera, serverRequestID, deviceRoom
 from helpers.mqtt import CaptureDetect, ImageInfoHandler, GetSetYolov5
@@ -24,9 +25,9 @@ def subscribe(client: mqtt_client):
 
 def on_message(client, userdata, msg):
     # print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-    MessageFilter(client, msg.payload.decode())
+    asyncio.run(MessageFilter(client, msg.payload.decode()))
 
-def MessageFilter(client, message):
+async def MessageFilter(client, message):
     if message == serverRequestCamera:
         CaptureDetect(client, topicPub)
         
