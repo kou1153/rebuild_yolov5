@@ -29,9 +29,7 @@ def PredictImage():
   commandArr = ["servo360:45", "servo360:135", "servo180:90", "servo360:45", "servo360:135"]
   deviceTopic = GetDeviceTopic()
   for command in commandArr:
-    beginSystem = time.time()
     subprocess.call(["mosquitto_pub", "-h", f"{broker}", "-p", f"{port}", "-t", f"{deviceTopic}", "-m", f"{command}", "-u", f"{username}", "-P", f"{password}"])
-    print(f"time run system command {round(time.time() - beginSystem, 1)} seconds")
     sleep(1)
     TakeImage()
     print("Take a picture now")
@@ -39,14 +37,11 @@ def PredictImage():
   subprocess.call(["mosquitto_pub", "-h", f"{broker}", "-p", f"{port}", "-t", f"{deviceTopic}", "-m", "requestResetServo", "-u", f"{username}", "-P", f"{password}"])
   print(f"time run ImageCapture is {round(time.time() - beginImage, 1)} seconds")
 
-  begin = time.time()
   if not len(os.listdir(currentdayImagePath)) == 0:
     for file in os.listdir(currentdayImagePath):
       result = ImageProcess(file[:file.index(".")])
       if result != "0": 
-        print(f"time run PredictImage is {round(time.time() - begin, 1)} seconds")
         return "1"
-    print(f"time run PredictImage is {round(time.time() - begin, 1)} seconds")
     return "0"
   else: 
     print("No file to detect")

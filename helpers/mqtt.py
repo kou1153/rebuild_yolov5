@@ -8,12 +8,10 @@ from yolo.main import PredictImage
 def CaptureDetect(client, topic):
     begin = time.time()
     result = PredictImage()
+    print("Predict result: ", result)
     client.publish(topic, result)
     print(f"time run CaptureDetect is {round(time.time() - begin, 1)} seconds")
-        
-    uploadBegin = time.time()
     UploadImage()
-    print(f"time response UploadImage is {round(time.time() - uploadBegin, 1)} seconds")
 
 def ImageInfoHandler(client, topic, deviceRoom):
     begin = time.time()
