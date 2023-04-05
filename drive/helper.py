@@ -2,6 +2,7 @@ import os
 import os.path
 import subprocess
 from pathlib import Path
+from copy import deepcopy
 
 from config.drive import currentdayImagePath, doneUploadList, today
 from config.mqtt import deviceRoom, userid
@@ -75,27 +76,44 @@ def CleanUp():
 
 def FetchAllDateFolders(service, roomFolderID):
     response = GetAllDaysInRoom(service, roomFolderID)
-    dateFolderIDs, dateFolderNames = list(), list()
+    dateFolderIDs =  list()
     for item in response["files"]:
         dateFolderIDs.append(item["id"])
-        dateFolderNames.append(item["name"])
     
-    return dateFolderIDs, dateFolderNames
+    return dateFolderIDs
 
 def FetchAllDateItems(service, dateFolderIDs):
     imageList = list()
     for item in dateFolderIDs:
         results = GetAllItemsInDate(service, item)
         imageList += results["files"]
-    imageDict, finalDict = dict(), dict()
-    for key in imageList:
-        name = (key["name"])[:(key["name"]).index("_")]
-        id = key["id"]
-        if name in imageDict:
-            imageDict[name].append(id)
-        else:
-            imageDict[name] = [id]
     
-    finalDict[deviceRoom] = [imageDict]
+    listOfImage = list()
 
-    return finalDict
+    imageDict = {"date": "", "ids": []}
+
+    previous = ""
+
+    for key in imageList:
+        date = (key["name"])[:(key["name"]).index("_")]
+        id = key["id"]
+        
+        if previous == "" and imageDict["date"] == "":
+            imageDict["date"] = date
+            previous = date
+
+        if previous == date:
+            imageDict["ids"].append(id)
+            previous = date
+
+        if previous != date and previous != "":
+            listOfImage.append(deepcopy(imageDict))
+            imageDict["ids"].clear()
+            imageDict["date"] = date
+            imageDict["ids"].append(id)
+            previous = date
+
+        if key == imageList[-1]:
+            listOfImage.append(deepcopy(imageDict))
+
+    return listOfImage

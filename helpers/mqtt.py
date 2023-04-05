@@ -13,11 +13,10 @@ def CaptureDetect(client, topic):
     print(f"time run CaptureDetect is {round(time.time() - begin, 1)} seconds")
     UploadImage()
 
-def ImageInfoHandler(client, topic, deviceRoom):
+def ImageInfoHandler(client, topic):
     begin = time.time()
-    dateFolderNames, imageDict = GetImageInfo(deviceRoom)
-    client.publish(topic, json.dumps(dateFolderNames))
-    client.publish(topic, json.dumps(imageDict))
+    listOfImage = GetImageInfo()
+    client.publish(topic, json.dumps(listOfImage))
     print(f"time response ImageInfoHandler is {round(time.time() - begin, 1)} seconds")
 
 def GetSetYolov5():

@@ -1,6 +1,6 @@
 import asyncio
 from paho.mqtt import client as mqtt_client
-from config.mqtt import client_id, username, password, broker, port, topicSub, topicPub, serverRequestCamera, serverRequestID, deviceRoom
+from config.mqtt import client_id, username, password, broker, port, topicSub, topicPub, serverRequestCamera, serverRequestID
 from helpers.mqtt import CaptureDetect, ImageInfoHandler, GetSetYolov5
 
 def connectMqtt():
@@ -32,7 +32,7 @@ async def MessageFilter(client, message):
         CaptureDetect(client, topicPub)
         
     if message == serverRequestID:
-        ImageInfoHandler(client, topicPub, deviceRoom)
+        ImageInfoHandler(client, topicPub)
 
 def RunMQTT():
     try:

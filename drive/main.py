@@ -28,20 +28,20 @@ def UploadImage():
     except HttpError as e:
         print(f"Error: {str(e)}")
 
-def GetImageInfo(deviceRoom):
+def GetImageInfo():
     begin = time.time()
     try:
         userFolderID = ValidateUserFolder(service)
 
         roomFolderID = ValidateRoomFolder(service, userFolderID)
 
-        dateFolderIDs, dateFolderNames = FetchAllDateFolders(service, roomFolderID)
+        dateFolderIDs = FetchAllDateFolders(service, roomFolderID)
 
-        imageDict = FetchAllDateItems(service, dateFolderIDs)
+        listOfImage = FetchAllDateItems(service, dateFolderIDs)
 
         print(f"time run GetImageInfo: {round(time.time() - begin, 1)} seconds")
 
-        return dateFolderNames, imageDict
+        return listOfImage
 
     except HttpError as e:
         print(f"Error: {str(e)}")
