@@ -31,22 +31,19 @@ def ImageProcess(uniqueName):
 
 def PredictImage():
   beginImage = time.time()
+  breakAllow = True
   commandArr = ["servo360:45", "servo360:135", "servo180:90", "servo360:45", "servo360:135"]
   deviceTopic = GetDeviceTopic()
   for command in commandArr:
+    uniqueName = TakeImage()
     mqttClient.publish(deviceTopic, command)
-    sleep(1)
-    TakeImage()
-    print("Take a picture now")
+    result = ImageProcess(uniqueName)
+    if result != "0":
+        breakAllow = False
+        mqttClient.publish(topicPub, "1")
+        break
+    sleep(0.5)
+  if breakAllow:
+    mqttClient.publish(topicPub, "0")
   mqttClient.publish(deviceTopic, "requestResetServo")
   print(f"time run ImageCapture is {round(time.time() - beginImage, 1)} seconds")
-
-  if not len(os.listdir(currentdayImagePath)) == 0:
-    for file in os.listdir(currentdayImagePath):
-      result = ImageProcess(file[:file.index(".")])
-      if result != "0": 
-        mqttClient.publish(topicPub, "1")
-        return
-    mqttClient.publish(topicPub, "0")
-  else: 
-    print("No file to detect")
