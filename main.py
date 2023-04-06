@@ -29,7 +29,7 @@ def on_message(client, userdata, msg):
 
 async def MessageFilter(client, message):
     if message == serverRequestCamera:
-        CaptureDetect(client, topicPub)
+        CaptureDetect()
         
     if message == serverRequestID:
         ImageInfoHandler(client, topicPub)

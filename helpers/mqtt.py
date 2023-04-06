@@ -5,11 +5,9 @@ from config.mqtt import deviceRoom, apiURL, topicSub, topicPub, serverRequestCam
 from drive.main import GetImageInfo, UploadImage
 from yolo.main import PredictImage
 
-def CaptureDetect(client, topic):
+def CaptureDetect():
     begin = time.time()
-    result = PredictImage()
-    print("Predict result: ", result)
-    client.publish(topic, result)
+    PredictImage()
     print(f"time run CaptureDetect is {round(time.time() - begin, 1)} seconds")
     UploadImage()
 
