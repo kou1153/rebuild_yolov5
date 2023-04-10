@@ -1,6 +1,6 @@
 import time
 import httpx
-from config.mqtt import deviceRoom, apiURL, topicSub, topicPub, serverRequestCamera, serverRequestID, systemKey, userid
+from config.mqtt import deviceRoom, apiURL, topicSub, topicPub, serverRequestCamera, serverRequestID, serverRequestACID, systemKey, userid
 from drive.main import GetImageInfo, UploadImage
 from yolo.main import PredictImage
 from ac.main import GetAcImage
@@ -26,4 +26,4 @@ def AcImageInfoHandler():
 def GetSetYolov5():
     result = httpx.get(f"{apiURL}/{deviceRoom}", headers={"system": systemKey, "userid": userid}).json()
     if "success" in result and result["success"] == False:
-        result = httpx.post(apiURL, headers={"system": systemKey, "userid": userid}, data={"subscribe": topicSub, "publish": topicPub, "room": deviceRoom, "request": [serverRequestCamera, serverRequestID], "userID": userid})
+        result = httpx.post(apiURL, headers={"system": systemKey, "userid": userid}, data={"subscribe": topicSub, "publish": topicPub, "room": deviceRoom, "request": [serverRequestCamera, serverRequestID, serverRequestACID], "userID": userid})
