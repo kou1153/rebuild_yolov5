@@ -4,9 +4,9 @@ import subprocess
 from pathlib import Path
 from copy import deepcopy
 
-from config.drive import currentdayImagePath, doneUploadList, today
+from config.drive import currentdayImagePath, doneUploadList, today, acImagePath
 from config.mqtt import deviceRoom, userid
-from drive.query import GetRootFolderID, GetUserFolderInfo, GetRoomFolderInfo, GetAllDaysInRoom, GetAllItemsInDate, GetDateFolderInfo, CreateFolder, UploadFile, SetPermission
+from drive.query import GetRootFolderID, GetUserFolderInfo, GetRoomFolderInfo, GetAllDaysInRoom, GetAllItemsInDate, GetDateFolderInfo, CreateFolder, UploadFile, SetPermission, GetAcImageFolderInfo
 
 def ValidateUserFolder(service):
     userFolderInfo = GetUserFolderInfo(service, GetRootFolderID(service))
@@ -37,7 +37,7 @@ def ValidateRoomFolder(service, userFolderID):
 def ValidateDateFolder(service, roomFolderID):
     dateFolderInfo = GetDateFolderInfo(service, roomFolderID)
     if not dateFolderInfo['files']:
-        file_metadata ={
+        file_metadata = {
             "name": f"{today}",
             "parents": [roomFolderID],
             "mimeType": "application/vnd.google-apps.folder"
@@ -58,6 +58,32 @@ def GetAndUploadFile(service, dateFolderID):
             if "id" in response and len(response) >= 1:
                 doneUploadList.append(f"{file}")
         return response.get("id")
+    else:
+        print("No file in this directory")
+
+def ValidateACFolder(service, userFolderID):
+    imageFolderID = GetAcImageFolderInfo(service, userFolderID)
+    if not imageFolderID['files']:
+        file_metadata = {
+            "name": "AC",
+            "parents": [userFolderID],
+            "mimeType": "application/vnd.google-apps.folder"
+        }
+        response = CreateFolder(service, file_metadata)
+        return response.get("id")
+    else:
+        return imageFolderID["files"][0]["id"]
+
+def UploadACImage(service, imageFolderID):
+    if not len(os.listdir(acImagePath)) == 0:
+        for file in os.listdir(acImagePath):
+            file_metadata = {
+                    "name": file,
+                    "parents": [imageFolderID]
+                }
+            response = service.files().create(body=file_metadata, media_body = f'{Path(f"{acImagePath}/{file}")}', fields="id").execute()
+            subprocess.call(["rm", f'{Path(f"{acImagePath}/{file}")}'])
+            return response.get("id")
     else:
         print("No file in this directory")
 

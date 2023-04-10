@@ -1,21 +1,27 @@
 import time
-import json
 import httpx
 from config.mqtt import deviceRoom, apiURL, topicSub, topicPub, serverRequestCamera, serverRequestID, systemKey, userid
 from drive.main import GetImageInfo, UploadImage
 from yolo.main import PredictImage
+from ac.main import GetAcImage
 
 def CaptureDetect():
     begin = time.time()
     PredictImage()
     print(f"time run CaptureDetect is {round(time.time() - begin, 1)} seconds")
+    beginUpload = time.time() 
     UploadImage()
+    print(f"time run UploadImage is {round(time.time() - beginUpload, 1)} seconds")
 
-def ImageInfoHandler(client, topic):
+def ImageInfoHandler():
     begin = time.time()
-    listOfImage = GetImageInfo()
-    client.publish(topic, json.dumps(listOfImage))
+    GetImageInfo()
     print(f"time response ImageInfoHandler is {round(time.time() - begin, 1)} seconds")
+
+def AcImageInfoHandler():
+    begin = time.time()
+    GetAcImage()
+    print(f"time response GetAcImage is {round(time.time() - begin, 1)} seconds")
 
 def GetSetYolov5():
     result = httpx.get(f"{apiURL}/{deviceRoom}", headers={"system": systemKey, "userid": userid}).json()

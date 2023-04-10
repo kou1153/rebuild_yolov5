@@ -4,6 +4,7 @@ today = date.today()
 
 moduleRootPath = "./drive"
 rootImagePath = "./image"
+acImagePath = "./ac_image"
 
 currentdayImagePath = f"{rootImagePath}/{today}"
 

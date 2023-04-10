@@ -1,7 +1,7 @@
 import asyncio
 from paho.mqtt import client as mqtt_client
-from config.mqtt import client_id, username, password, broker, port, topicSub, topicPub, serverRequestCamera, serverRequestID
-from helpers.mqtt import CaptureDetect, ImageInfoHandler, GetSetYolov5
+from config.mqtt import client_id, username, password, broker, port, topicSub, serverRequestCamera, serverRequestID, serverRequestACID
+from helpers.mqtt import CaptureDetect, ImageInfoHandler, GetSetYolov5, AcImageInfoHandler
 
 def connectMqtt():
     # Set Connecting Client ID
@@ -20,11 +20,10 @@ def on_connect(client, userdata, flags, rc):
 
 def subscribe(client: mqtt_client):
     client.subscribe(topicSub)
-    client.subscribe(topicPub)
     client.on_message = on_message
 
 def on_message(client, userdata, msg):
-    # print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+    print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
     asyncio.run(MessageFilter(client, msg.payload.decode()))
 
 async def MessageFilter(client, message):
@@ -32,7 +31,10 @@ async def MessageFilter(client, message):
         CaptureDetect()
         
     if message == serverRequestID:
-        ImageInfoHandler(client, topicPub)
+        ImageInfoHandler()
+
+    if message == serverRequestACID:
+        AcImageInfoHandler()
 
 def RunMQTT():
     try:

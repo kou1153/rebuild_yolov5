@@ -1,6 +1,6 @@
+from googleapiclient.http import MediaFileUpload
 from config.drive import today, currentdayImagePath
 from config.mqtt import deviceRoom, userid
-from googleapiclient.http import MediaFileUpload
 
 def GetRootFolderID(service):
     rootFolderInfo = service.files().list(q=f"name='Image' and mimeType='application/vnd.google-apps.folder'", spaces='drive', fields='files(id, name)').execute()
@@ -8,6 +8,9 @@ def GetRootFolderID(service):
 
 def GetUserFolderInfo(service, rootFolderID):
     return service.files().list(q=f"name='{userid}' and parents='{rootFolderID}' and mimeType='application/vnd.google-apps.folder'", spaces='drive', fields='files(id, name)').execute()
+
+def GetAcImageFolderInfo(service, userFolderID):
+    return service.files().list(q=f"name='AC' and parents='{userFolderID}' and mimeType='application/vnd.google-apps.folder'", spaces='drive', fields='files(id, name)').execute()
 
 def GetRoomFolderInfo(service, userFolderID):
     return service.files().list(q=f"name='{deviceRoom}' and parents='{userFolderID}' and mimeType='application/vnd.google-apps.folder'", spaces='drive', fields='files(id, name)').execute()
