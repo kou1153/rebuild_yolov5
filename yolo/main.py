@@ -9,12 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from config.mqtt import topicPub
 from config.drive import currentdayImagePath
 from yolo.helper import TakeImage, ResultsParser, GetDeviceTopic
-from yolo.mqtt import connectMqtt
-
-try: 
-  mqttClient = connectMqtt()
-except:
-  print("failed to connect mqtt as sender for yolo")
+from yolo.mqtt import mqttPublish
 
 model = torch.hub.load('ultralytics/yolov5', 'yolov5n')
 model.multi_label = False
@@ -35,13 +30,13 @@ def PredictImage():
   deviceTopic = GetDeviceTopic()
   for command in commandArr:
     uniqueName = TakeImage()
-    mqttClient.publish(deviceTopic, command)
+    mqttPublish(deviceTopic, command)
     result = ImageProcess(uniqueName)
     if result != "0":
         breakAllow = False
-        mqttClient.publish(topicPub, "1")
+        mqttPublish(topicPub, "1")
         break
     sleep(0.5)
   if breakAllow:
-    mqttClient.publish(topicPub, "0")
-  mqttClient.publish(deviceTopic, "requestResetServo")
+    mqttPublish(topicPub, "0")
+  mqttPublish(deviceTopic, "requestResetServo")

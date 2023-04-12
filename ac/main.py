@@ -4,21 +4,17 @@ import json
 from time import sleep
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from ac.mqtt import connectMqtt
+from ac.mqtt import mqttPublish
 from ac.helper import GetDeviceTopic, TakeImage
 from config.mqtt import topicPub
 from drive.main import GetACImageInfo
 
-try:
-  mqttClient = connectMqtt()
-except:
-  print("failed to connect mqtt as sender for ac")
-
 def GetAcImage():
     deviceTopic = GetDeviceTopic()
-    mqttClient.publish(deviceTopic, "requestServo360:45")
+    mqttPublish(deviceTopic, "requestServo360:45")
     sleep(1)
     TakeImage()
     imageID = GetACImageInfo()
+    print("got this image ID: ", imageID)
     response = {"acimageID: ": imageID}
-    mqttClient.publish(topicPub, json.dumps(response))
+    mqttPublish(topicPub, response)
