@@ -4,9 +4,12 @@ import httpx
 from config.drive import currentdayImagePath, today
 from config.mqtt import apiCameraModule, deviceRoom, systemKey, userid
 
-def TakeImage():
+def TakeImage(toggle):
   uniqueName = f"{today}_{datetime.datetime.now().strftime('%H%M%S')}"
-  subprocess.call(["libcamera-still", "-o", f"{currentdayImagePath}/{uniqueName}.bmp", "--vflip", "-t", "1", "--width", "640", "--height", "480"])
+  if toggle == True:
+    subprocess.call(["libcamera-still", "-o", f"{currentdayImagePath}/{uniqueName}.bmp", "--vflip", "-t", "1", "--width", "640", "--height", "480"])
+  else:
+    subprocess.call(["libcamera-still", "-o", f"{currentdayImagePath}/{uniqueName}.bmp", "-t", "1", "--width", "640", "--height", "480"])
   return uniqueName
 
 def ResultsParser(results):

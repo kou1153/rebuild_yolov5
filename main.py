@@ -37,14 +37,14 @@ async def MessageFilter(client, message):
         AcImageInfoHandler()
 
 def RunMQTT():
-    try:
-        client = connectMqtt()
-    except:
-        print("Failed to connect mqtt")
-    else:
-        subscribe(client)
-        while True:
-            client.loop()
+    # try:
+    client = connectMqtt()
+    # except:
+    #     print("Failed to connect mqtt")
+    # else:
+    subscribe(client)
+    while True:
+        client.loop()
 
 if __name__ == "__main__":
   RunMQTT()

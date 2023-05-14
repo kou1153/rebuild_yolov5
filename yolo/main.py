@@ -26,10 +26,13 @@ def ImageProcess(uniqueName):
 
 def PredictImage():
   breakAllow = True
-  commandArr = ["requestServo360:45", "requestServo360:135", "requestServo180:90", "requestServo360:45", "requestServo360:135"]
+  commandArr = ['requestServo180:0', 'requestServo180:45', 'requestServo180:90', 'requestServo180:135', 'requestServo180:180']
   deviceTopic = GetDeviceTopic()
   for command in commandArr:
-    uniqueName = TakeImage()
+    if command == "requestServo180:135" or command == "requestServo180:180":
+      uniqueName = TakeImage(True)
+    else:
+      uniqueName = TakeImage(False)
     mqttPublish(deviceTopic, command)
     result = ImageProcess(uniqueName)
     if result != "0":
@@ -39,4 +42,4 @@ def PredictImage():
     sleep(0.5)
   if breakAllow:
     mqttPublish(topicPub, "0")
-  mqttPublish(deviceTopic, "requestResetServo")
+  mqttPublish(deviceTopic, 'requestResetServo')

@@ -11,10 +11,10 @@ from drive.main import GetACImageInfo
 
 def GetAcImage():
     deviceTopic = GetDeviceTopic()
-    mqttPublish(deviceTopic, "requestServo360:45")
+    mqttPublish(deviceTopic, 'requestServo180:0', False)
     sleep(1)
     TakeImage()
     imageID = GetACImageInfo()
     print("got this image ID: ", imageID)
     response = {"acimageID: ": imageID}
-    mqttPublish(topicPub, response)
+    mqttPublish(topicPub, response, True)
